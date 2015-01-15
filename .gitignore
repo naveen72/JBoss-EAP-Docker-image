@@ -1,0 +1,5 @@
+installer/jboss-eap-*.jar
+patches/jboss-eap-*.zip
+jce-unlimited/*policy*.jar
+resources/auto.xml.variables
+

@@ -21,7 +21,7 @@
 <com.izforge.izpack.panels.UserInputPanel id="CreateUserPanel">
 <userInput>
 <entry autoPrompt="true" key="adminPassword"/>
-<entry key="adminUser" value="admin"/>
+<entry autoPrompt="true" key="adminUser"/>
 </userInput>
 </com.izforge.izpack.panels.UserInputPanel>
 <com.izforge.izpack.panels.UserInputPanel id="QuickStartsPanel">
