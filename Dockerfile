@@ -26,10 +26,14 @@ ENV JAVA_HOME /usr/java/jdk1.7.0_72
 # Perform the "Yes, I want grownup encryption" Java ceremony
 RUN mkdir -p /tmp/UnlimitedJCEPolicy
 ADD ./jce-unlimited/US_export_policy.jar /tmp/UnlimitedJCEPolicy/US_export_policy.jar
-ADD ./jce-unlimited/cacerts              /tmp/UnlimitedJCEPolicy/cacerts
 ADD ./jce-unlimited/local_policy.jar     /tmp/UnlimitedJCEPolicy/local_policy.jar
-RUN mv /tmp/UnlimitedJCEPolicy/*.* /usr/java/jdk1.7.0_72/jre/lib/security/
+RUN mv /tmp/UnlimitedJCEPolicy/*.*       $JAVA_HOME/jre/lib/security/
 RUN rm -rf /tmp/UnlimitedJCEPolicy*
+
+# Add CA certs
+ADD ./trusted-root-ca/StaatderNederlandenRootCA-G2.pem     /tmp/StaatderNederlandenRootCA-G2.pem
+RUN $JAVA_HOME/bin/keytool -import -noprompt -trustcacerts -alias StaatderNederlandenRootCA-G2 -file  /tmp/StaatderNederlandenRootCA-G2.pem -keystore $JAVA_HOME/jre/lib/security/cacerts -storepass changeit
+
 
 ##########################################################
 # Create jboss user
@@ -40,7 +44,7 @@ RUN groupadd -r jboss && useradd -r -g jboss -m -d /home/jboss jboss
 
 
 ############################################
-# Install EAP 6.3.0.GA and r2
+# Install EAP 6.3.2.GA
 ############################################
 RUN yum -y install zip unzip
 
@@ -49,43 +53,48 @@ ENV INSTALLDIR /home/jboss/EAP-6.3.0
 ENV HOME /home/jboss
 
 RUN mkdir $INSTALLDIR && \
-   mkdir $INSTALLDIR/installer && \
-   mkdir $INSTALLDIR/patches && \
+   mkdir $INSTALLDIR/distribution && \
    mkdir $INSTALLDIR/resources
 
 
 USER root
-ADD installer/jboss-eap-6.3.0-installer.jar $INSTALLDIR/installer/jboss-eap-6.3.0-installer.jar
-ADD patches/jboss-eap-6.3.2-patch.zip $INSTALLDIR/patches/jboss-eap-6.3.2-patch.zip
-RUN chown -R jboss /home/jboss
+ADD distribution $INSTALLDIR/distribution
+RUN chown -R jboss:jboss /home/jboss
 RUN find /home/jboss -type d -execdir chmod 770 {} \;
 RUN find /home/jboss -type f -execdir chmod 660 {} \;
 
-
 USER jboss
-### RUN unzip $INSTALLDIR/installer/jboss-eap-6.3.0.zip  -d $INSTALLDIR
-ADD resources/auto.xml $INSTALLDIR/resources/auto.xml
-ADD resources/auto.xml.variables $INSTALLDIR/resources/auto.xml.variables
-RUN java -jar $INSTALLDIR/installer/jboss-eap-6.3.0-installer.jar $INSTALLDIR/resources/auto.xml -variablefile $INSTALLDIR/resources/auto.xml.variables
-RUN $INSTALLDIR/jboss-eap-6.3/bin/jboss-cli.sh "patch apply $INSTALLDIR/patches/jboss-eap-6.3.2-patch.zip"
+RUN unzip $INSTALLDIR/distribution/jboss-eap-6.3.0.zip  -d $INSTALLDIR
+RUN $INSTALLDIR/jboss-eap-6.3/bin/jboss-cli.sh "patch apply $INSTALLDIR/distribution/jboss-eap-6.3.2-patch.zip"
 
 
 ############################################
 # Create start script to run EAP instance
 ############################################
 USER root
-RUN echo "#!/bin/sh" >> $HOME/start.sh
-RUN echo "echo JBoss EAP Start script" >> $HOME/start.sh
-RUN echo "runuser -l jboss -c '$HOME/EAP-6.3.0/jboss-eap-6.3/bin/standalone.sh -c standalone-full.xml -b 0.0.0.0 -bmanagement 0.0.0.0'" >> $HOME/start.sh
-RUN chmod +x $HOME/start.sh
 
+RUN yum -y install curl
+RUN curl -o /usr/local/bin/gosu -SL 'https://github.com/tianon/gosu/releases/download/1.1/gosu' \
+	&& chmod +x /usr/local/bin/gosu
 
 ############################################
 # Remove install artifacts
 ############################################
-RUN rm -rf $INSTALLDIR/installer
-RUN rm -rf $INSTALLDIR/patches
+RUN rm -rf $INSTALLDIR/distribution
 RUN rm -rf $INSTALLDIR/resources
+
+############################################
+# Add customization sub-directories (for entrypoint)
+############################################
+ADD docker-entrypoint-initdb.d  /docker-entrypoint-initdb.d
+RUN chown -R jboss:jboss        /docker-entrypoint-initdb.d
+RUN find /docker-entrypoint-initdb.d -type d -execdir chmod 770 {} \;
+RUN find /docker-entrypoint-initdb.d -type f -execdir chmod 660 {} \;
+
+ADD modules  $INSTALLDIR/modules
+RUN chown -R jboss:jboss $INSTALLDIR/modules
+RUN find $INSTALLDIR/modules -type d -execdir chmod 770 {} \;
+RUN find $INSTALLDIR/modules -type f -execdir chmod 660 {} \;
 
 ############################################
 # Expose paths and start JBoss
@@ -93,6 +102,17 @@ RUN rm -rf $INSTALLDIR/resources
 
 EXPOSE 22 5455 9999 8080 5432 4447 5445 9990 3528
 
-CMD /home/jboss/start.sh
+RUN mkdir /etc/jboss-as
+RUN mkdir /var/log/jboss/
+RUN chown jboss:jboss /var/log/jboss/
 
-# Finished
+COPY docker-entrypoint.sh /
+RUN chmod 700 /docker-entrypoint.sh
+
+############################################
+# Start JBoss in stand-alone mode
+############################################
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
+
+CMD ["start-jboss"]

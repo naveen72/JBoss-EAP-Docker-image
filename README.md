@@ -1,18 +1,24 @@
 
-## JBoss EAP 6.3 docker
+## JBoss EAP 6.3.2 docker
 This project builds a docker container for running JBoss EAP 6.3.0.GA. with roll-up patch 2
 
 
 Before running the build:
 
 1. Install [Docker](https://www.docker.io/gettingstarted/#1)
-2. Download the JBoss EAP 6.3.0 install jar
-3. Download roll-up patch 2
-4. Put the install jar file into installer directory and the patch into the patches
-	
+2. Setup the /distribution directory, by adding the JBoss EAP 6.3.0 zip distribution and roll-up patch files (jboss-eap-6.3.0.zip / jboss-eap-6.3.2-patch.zip)
+3. Setup the /jce-unlimited directory, by adding the JCE unlimited policy files (local_policy.jar / US_export_policy.jar)
+4. Setup the /trusted-root-ca directory, by adding your trusted root CA files (in .pem format)
+
 Once you have completed steps 1..4 you can build an image using the following command:
 
-		$ docker build -t eap632 . 
+		$ docker build -t fbascheper/redhat-jboss-eap .
+        $ docker push fbascheper/redhat-jboss-eap
+
+        $ docker run -P -it -e JBOSS_USER=jbossadmin -e JBOSS_PASSWORD=jboss@min1 ebstest-eap bash
+
+
+
 
 
 
