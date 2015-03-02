@@ -18,15 +18,17 @@ Once you have completed steps 1..4 you can build an image using the following co
         $ docker run -P -it -e JBOSS_USER=jbossadmin -e JBOSS_PASSWORD=jboss@min1 ebstest-eap bash
 
 
-
-
-
-
 You can run the container with the following command:
 
 		$ docker run -P -d -t eap632
 
 This will run the eap632 container and automatically start an EAP instance.
+
+
+
+You can connect to the running container using:
+
+        $ docker exec -it <<container-id>> bash
 
 
 You can confirm that the container is running with the ps command:      	
