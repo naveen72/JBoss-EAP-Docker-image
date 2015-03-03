@@ -100,7 +100,7 @@ RUN find $INSTALLDIR/modules -type f -execdir chmod 660 {} \;
 # Expose paths and start JBoss
 ############################################
 
-EXPOSE 22 5455 9999 8009 8080 8443 3528 3529 7500 45700 7600 57600 5445 23364 5432 8090 4447 4712 4713 9990 5005
+EXPOSE 22 5455 9999 8009 8080 8443 3528 3529 7500 45700 7600 57600 5445 23364 5432 8090 4447 4712 4713 9990 8787
 
 RUN mkdir /etc/jboss-as
 RUN mkdir /var/log/jboss/

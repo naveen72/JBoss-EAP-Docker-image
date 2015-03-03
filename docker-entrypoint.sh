@@ -98,7 +98,7 @@ if [ -d /docker-entrypoint-initdb.d ]; then
 fi
 
 #
-# Retart JBoss EAP server
+# Restart JBoss EAP server
 #
 echo "=> Shutting down JBoss EAP server"
 if [ "$JBOSS_MODE" = "standalone" ]; then
@@ -109,13 +109,21 @@ fi
 
 echo "=> Restarting JBoss EAP server"
 
+if [ "$JBOSS_DEBUG_SUSPEND" = "TRUE" ] || [ "$JBOSS_DEBUG_SUSPEND" = "true" ]; then
+   JBOSS_DEBUG_CONFIG="--debug 8787"
+   echo "Using debug configuration $JBOSS_DEBUG_CONFIG"
+else
+   JBOSS_DEBUG_CONFIG=""
+   echo "Default mode (no suspend / debug)"
+fi
+
 
 if [ "$1" = 'start-jboss' ]; then
-    exec gosu jboss $JBOSS_HOME/bin/$JBOSS_MODE.sh -b 0.0.0.0 -bmanagement 0.0.0.0 -c $JBOSS_CONFIG 2>&1 | tee /var/log/jboss/console.log
+    exec gosu jboss $JBOSS_HOME/bin/$JBOSS_MODE.sh -b 0.0.0.0 -bmanagement 0.0.0.0 -c $JBOSS_CONFIG $JBOSS_DEBUG_CONFIG 2>&1 | tee /var/log/jboss/console.log
 
 
 else
-    exec gosu jboss nohup $JBOSS_HOME/bin/$JBOSS_MODE.sh -b 0.0.0.0 -bmanagement 0.0.0.0 -c $JBOSS_CONFIG > /var/log/jboss/console.log 2>&1 &
+    exec gosu jboss nohup $JBOSS_HOME/bin/$JBOSS_MODE.sh -b 0.0.0.0 -bmanagement 0.0.0.0 -c $JBOSS_CONFIG $JBOSS_DEBUG_CONFIG > /var/log/jboss/console.log 2>&1 &
     wait_for_server
 
     echo "=> JBoss EAP server startup complete"
