@@ -20,7 +20,7 @@ Once you have completed steps 1..4 you can build an image using the following co
 
 You can run the container with the following command:
 
-		$ docker run -P -d -t eap632
+		$ docker run -P -d -t eap63x
 
 This will run the eap632 container and automatically start an EAP instance.
 

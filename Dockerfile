@@ -14,14 +14,14 @@ RUN yum -y update;yum clean all
 # Install Java JDK
 ##########################################################
 RUN yum -y install wget && \
-    wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/7u72-b14/jdk-7u72-linux-x64.rpm && \
-    echo "c55acf3c04e149c0b91f57758f6b63ce  jdk-7u72-linux-x64.rpm" >> MD5SUM && \
+    wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u40-b26/jdk-8u40-linux-x64.rpm && \
+    echo "e4b51683e1f69e502e6fdd23e54ca0f2  jdk-8u40-linux-x64.rpm" >> MD5SUM && \
     md5sum -c MD5SUM && \
-    rpm -Uvh jdk-7u72-linux-x64.rpm && \
+    rpm -Uvh jdk-8u40-linux-x64.rpm && \
     yum -y remove wget && \
-    rm -f jdk-7u72-linux-x64.rpm MD5SUM
+    rm -f jdk-8u40-linux-x64.rpm MD5SUM
 
-ENV JAVA_HOME /usr/java/jdk1.7.0_72
+ENV JAVA_HOME /usr/java/jdk1.8.0_40
 
 # Perform the "Yes, I want grownup encryption" Java ceremony
 RUN mkdir -p /tmp/UnlimitedJCEPolicy
@@ -44,7 +44,7 @@ RUN groupadd -r jboss && useradd -r -g jboss -m -d /home/jboss jboss
 
 
 ############################################
-# Install EAP 6.3.2.GA
+# Install EAP 6.3.3.GA
 ############################################
 RUN yum -y install zip unzip
 
@@ -65,7 +65,8 @@ RUN find /home/jboss -type f -execdir chmod 660 {} \;
 
 USER jboss
 RUN unzip $INSTALLDIR/distribution/jboss-eap-6.3.0.zip  -d $INSTALLDIR
-RUN $INSTALLDIR/jboss-eap-6.3/bin/jboss-cli.sh "patch apply $INSTALLDIR/distribution/jboss-eap-6.3.2-patch.zip"
+RUN $INSTALLDIR/jboss-eap-6.3/bin/jboss-cli.sh "patch apply $INSTALLDIR/distribution/jboss-eap-6.3.3-patch.zip"
+RUN $INSTALLDIR/jboss-eap-6.3/bin/jboss-cli.sh "patch apply $INSTALLDIR/distribution/BZ-1195283.zip"
 
 
 ############################################
@@ -74,8 +75,9 @@ RUN $INSTALLDIR/jboss-eap-6.3/bin/jboss-cli.sh "patch apply $INSTALLDIR/distribu
 USER root
 
 RUN yum -y install curl
-RUN curl -o /usr/local/bin/gosu -SL 'https://github.com/tianon/gosu/releases/download/1.1/gosu' \
-	&& chmod +x /usr/local/bin/gosu
+RUN curl -o /usr/local/bin/gosu -SL "https://github.com/tianon/gosu/releases/download/1.3/gosu-amd64" \
+    	&& chmod +x /usr/local/bin/gosu
+
 
 ############################################
 # Remove install artifacts
