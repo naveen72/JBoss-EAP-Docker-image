@@ -13,9 +13,9 @@
 
 # set -e
 
-export JBOSS_HOME=$HOME/EAP-6.3.0/jboss-eap-6.3
+export JBOSS_HOME=$HOME/EAP-6.4.0/jboss-eap-6.4
 export JBOSS_CLI=$JBOSS_HOME/bin/jboss-cli.sh
-export PATH=/home/jboss/EAP-6.3.0/jboss-eap-6.3/bin:$PATH
+export PATH=/home/jboss/EAP-6.4.0/jboss-eap-6.4/bin:$PATH
 
 
 #
@@ -72,7 +72,7 @@ gosu jboss $JBOSS_HOME/bin/add-user.sh -s -u $JBOSS_USER -p $JBOSS_PASSWORD
 #
 # Copy any modules to EAP module dir
 #
-JBOSS_MODULES=$HOME/EAP-6.3.0/modules
+JBOSS_MODULES=$HOME/EAP-6.4.0/modules
 if [ -d $JBOSS_MODULES ]; then
     echo "=> Copying customization modules to EAP module dir"
     gosu jboss cp -R $JBOSS_MODULES/*  $JBOSS_HOME/modules

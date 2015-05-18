@@ -14,14 +14,15 @@ RUN yum -y update;yum clean all
 # Install Java JDK
 ##########################################################
 RUN yum -y install wget && \
-    wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u40-b26/jdk-8u40-linux-x64.rpm && \
-    echo "e4b51683e1f69e502e6fdd23e54ca0f2  jdk-8u40-linux-x64.rpm" >> MD5SUM && \
+    wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u45-b14/jdk-8u45-linux-x64.rpm && \
+    echo "50ae04f69743921dd6082dfe978672ad  jdk-8u45-linux-x64.rpm" >> MD5SUM && \
     md5sum -c MD5SUM && \
-    rpm -Uvh jdk-8u40-linux-x64.rpm && \
+    rpm -Uvh jdk-8u45-linux-x64.rpm && \
     yum -y remove wget && \
-    rm -f jdk-8u40-linux-x64.rpm MD5SUM
+    rm -f jdk-8u45-linux-x64.rpm MD5SUM
 
-ENV JAVA_HOME /usr/java/jdk1.8.0_40
+
+ENV JAVA_HOME /usr/java/jdk1.8.0_45
 
 # Perform the "Yes, I want grownup encryption" Java ceremony
 RUN mkdir -p /tmp/UnlimitedJCEPolicy
@@ -44,12 +45,12 @@ RUN groupadd -r jboss && useradd -r -g jboss -m -d /home/jboss jboss
 
 
 ############################################
-# Install EAP 6.3.3.GA
+# Install EAP 6.4.0.GA
 ############################################
 RUN yum -y install zip unzip
 
 USER jboss
-ENV INSTALLDIR /home/jboss/EAP-6.3.0
+ENV INSTALLDIR /home/jboss/EAP-6.4.0
 ENV HOME /home/jboss
 
 RUN mkdir $INSTALLDIR && \
@@ -64,9 +65,10 @@ RUN find /home/jboss -type d -execdir chmod 770 {} \;
 RUN find /home/jboss -type f -execdir chmod 660 {} \;
 
 USER jboss
-RUN unzip $INSTALLDIR/distribution/jboss-eap-6.3.0.zip  -d $INSTALLDIR
-RUN $INSTALLDIR/jboss-eap-6.3/bin/jboss-cli.sh "patch apply $INSTALLDIR/distribution/jboss-eap-6.3.3-patch.zip"
-RUN $INSTALLDIR/jboss-eap-6.3/bin/jboss-cli.sh "patch apply $INSTALLDIR/distribution/BZ-1195283.zip"
+RUN unzip $INSTALLDIR/distribution/jboss-eap-6.4.0.zip  -d $INSTALLDIR
+
+# Add extra patches if appropriate
+# RUN $INSTALLDIR/jboss-eap-6.4/bin/jboss-cli.sh "patch apply $INSTALLDIR/distribution/jboss-eap-6.4.1-patch.zip"
 
 
 ############################################
