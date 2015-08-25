@@ -68,7 +68,7 @@ USER jboss
 RUN unzip $INSTALLDIR/distribution/jboss-eap-6.4.0.zip  -d $INSTALLDIR
 
 # Add extra patches if appropriate
-# RUN $INSTALLDIR/jboss-eap-6.4/bin/jboss-cli.sh "patch apply $INSTALLDIR/distribution/jboss-eap-6.4.1-patch.zip"
+RUN $INSTALLDIR/jboss-eap-6.4/bin/jboss-cli.sh "patch apply $INSTALLDIR/distribution/jboss-eap-6.4.3-patch.zip"
 
 
 ############################################

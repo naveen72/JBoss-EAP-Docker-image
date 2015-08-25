@@ -13,24 +13,24 @@ Before running the build:
 Once you have completed steps 1..4 you can build an image using the following command:
 
 		$ docker build -t fbascheper/redhat-jboss-eap .
-		$ docker build -t fbascheper/redhat-jboss-eap:6.4.0 .
+		$ docker build -t fbascheper/redhat-jboss-eap:6.4.3 .
         $ docker push fbascheper/redhat-jboss-eap
-        $ docker push fbascheper/redhat-jboss-eap:6.4.0
+        $ docker push fbascheper/redhat-jboss-eap:6.4.3               §
 
 
 You can run the JBoss-EAP container and automatically start an EAP instance with the following command::
 
         $ docker run -P -it --rm -e JBOSS_USER=jbossadmin -e JBOSS_PASSWORD=jboss@min1 \
-        	fbascheper/redhat-jboss-eap:6.4.0 
+        	fbascheper/redhat-jboss-eap:6.4.3 
 
 
 Or you can run the container linked to postgres-td container and start a bash shell or jboss-cli.sh (as user jboss)
 
         $ docker run -P -it --rm -e JBOSS_USER=jbossadmin -e JBOSS_PASSWORD=jboss@min1 \
-        	fbascheper/redhat-jboss-eap:6.4.0 bash
+        	fbascheper/redhat-jboss-eap:6.4.3 bash
         	
         $ docker run -P -it --rm -e JBOSS_USER=jbossadmin -e JBOSS_PASSWORD=jboss@min1 \
-        	fbascheper/redhat-jboss-eap:6.4.0 jboss-cli.sh -c
+        	fbascheper/redhat-jboss-eap:6.4.3 jboss-cli.sh -c
 
 
 
