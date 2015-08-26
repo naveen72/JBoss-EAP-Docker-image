@@ -1,6 +1,6 @@
 
-## JBoss EAP 6.4.0 Docker image
-This project builds a docker container for running JBoss EAP 6.4.0.GA.
+## JBoss EAP 6.4.3 Docker image
+This project builds a docker container for running JBoss EAP 6.4.3.GA.
 
 
 Before running the build:

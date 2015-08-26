@@ -14,15 +14,14 @@ RUN yum -y update;yum clean all
 # Install Java JDK
 ##########################################################
 RUN yum -y install wget && \
-    wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u45-b14/jdk-8u45-linux-x64.rpm && \
-    echo "50ae04f69743921dd6082dfe978672ad  jdk-8u45-linux-x64.rpm" >> MD5SUM && \
+    wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u60-b27/jdk-8u60-linux-x64.rpm && \
+    echo "6c9adca7ba0f89fe755653d2a62cdbd3  jdk-8u60-linux-x64.rpm" >> MD5SUM && \
     md5sum -c MD5SUM && \
-    rpm -Uvh jdk-8u45-linux-x64.rpm && \
+    rpm -Uvh jdk-8u60-linux-x64.rpm && \
     yum -y remove wget && \
-    rm -f jdk-8u45-linux-x64.rpm MD5SUM
+    rm -f jdk-8u60-linux-x64.rpm MD5SUM
 
-
-ENV JAVA_HOME /usr/java/jdk1.8.0_45
+ENV JAVA_HOME /usr/java/jdk1.8.0_60
 
 # Perform the "Yes, I want grownup encryption" Java ceremony
 RUN mkdir -p /tmp/UnlimitedJCEPolicy
@@ -67,7 +66,7 @@ RUN find /home/jboss -type f -execdir chmod 660 {} \;
 USER jboss
 RUN unzip $INSTALLDIR/distribution/jboss-eap-6.4.0.zip  -d $INSTALLDIR
 
-# Add extra patches if appropriate
+# Add patch - EAP 6.4.3
 RUN $INSTALLDIR/jboss-eap-6.4/bin/jboss-cli.sh "patch apply $INSTALLDIR/distribution/jboss-eap-6.4.3-patch.zip"
 
 
