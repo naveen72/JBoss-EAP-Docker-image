@@ -1,9 +1,9 @@
 #######################################################################
-# Creates a base Centos 6.6 image with JBoss EAP-6.3.0.GA r2              #
+# Creates a base Centos 6.7 image with JBoss EAP-6.4.x                #
 #######################################################################
 
-# Use the centos 6.6 base image
-FROM centos:6.6 
+# Use the centos 6.7 base image
+FROM centos:6.7
 
 MAINTAINER fbascheper <temp01@fam-scheper.nl>
 
@@ -66,8 +66,8 @@ RUN find /home/jboss -type f -execdir chmod 660 {} \;
 USER jboss
 RUN unzip $INSTALLDIR/distribution/jboss-eap-6.4.0.zip  -d $INSTALLDIR
 
-# Add patch - EAP 6.4.3
-RUN $INSTALLDIR/jboss-eap-6.4/bin/jboss-cli.sh "patch apply $INSTALLDIR/distribution/jboss-eap-6.4.3-patch.zip"
+# Add patch - EAP 6.4.4
+RUN $INSTALLDIR/jboss-eap-6.4/bin/jboss-cli.sh "patch apply $INSTALLDIR/distribution/jboss-eap-6.4.4-patch.zip"
 
 
 ############################################
