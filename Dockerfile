@@ -14,14 +14,14 @@ RUN yum -y update;yum clean all
 # Install Java JDK
 ##########################################################
 RUN yum -y install wget && \
-    wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u60-b27/jdk-8u60-linux-x64.rpm && \
-    echo "6c9adca7ba0f89fe755653d2a62cdbd3  jdk-8u60-linux-x64.rpm" >> MD5SUM && \
+    wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u65-b17/jdk-8u65-linux-x64.rpm && \
+    echo "1e587aca2514a612b10935813b1cef28  jdk-8u65-linux-x64.rpm" >> MD5SUM && \
     md5sum -c MD5SUM && \
-    rpm -Uvh jdk-8u60-linux-x64.rpm && \
+    rpm -Uvh jdk-8u65-linux-x64.rpm && \
     yum -y remove wget && \
-    rm -f jdk-8u60-linux-x64.rpm MD5SUM
+    rm -f jdk-8u65-linux-x64.rpm MD5SUM
 
-ENV JAVA_HOME /usr/java/jdk1.8.0_60
+ENV JAVA_HOME /usr/java/jdk1.8.0_65
 
 # Perform the "Yes, I want grownup encryption" Java ceremony
 RUN mkdir -p /tmp/UnlimitedJCEPolicy
