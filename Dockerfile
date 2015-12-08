@@ -59,6 +59,7 @@ RUN mkdir $INSTALLDIR && \
 
 USER root
 ADD distribution $INSTALLDIR/distribution
+ADD distribution-patches $INSTALLDIR/distribution-patches
 RUN chown -R jboss:jboss /home/jboss
 RUN find /home/jboss -type d -execdir chmod 770 {} \;
 RUN find /home/jboss -type f -execdir chmod 660 {} \;
@@ -66,8 +67,15 @@ RUN find /home/jboss -type f -execdir chmod 660 {} \;
 USER jboss
 RUN unzip $INSTALLDIR/distribution/jboss-eap-6.4.0.zip  -d $INSTALLDIR
 
-# Add patch - EAP 6.4.4
-RUN $INSTALLDIR/jboss-eap-6.4/bin/jboss-cli.sh "patch apply $INSTALLDIR/distribution/jboss-eap-6.4.4-patch.zip"
+# Add patch - EAP 6.4.5
+RUN $INSTALLDIR/jboss-eap-6.4/bin/jboss-cli.sh "patch apply $INSTALLDIR/distribution/jboss-eap-6.4.5-patch.zip"
+
+# ---------------------------------------------------------------------------------
+# JSF 2.1 API patch
+# See https://github.com/fbascheper/JBoss-EAP6-patch-01477141
+# ---------------------------------------------------------------------------------
+# Add oneoff patch - EBS-01477141-v2.patch
+RUN $INSTALLDIR/jboss-eap-6.4/bin/jboss-cli.sh "patch apply $INSTALLDIR/distribution-patches/EBS-01477141-v2.patch.zip --override-all"
 
 
 ############################################
@@ -84,6 +92,7 @@ RUN curl -o /usr/local/bin/gosu -SL "https://github.com/tianon/gosu/releases/dow
 # Remove install artifacts
 ############################################
 RUN rm -rf $INSTALLDIR/distribution
+RUN rm -rf $INSTALLDIR/distribution-patches
 RUN rm -rf $INSTALLDIR/resources
 
 ############################################
